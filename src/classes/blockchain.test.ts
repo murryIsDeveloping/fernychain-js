@@ -2,6 +2,7 @@ import { BlockChain } from "./blockchain";
 import { GenisisBlock, Block } from "./block";
 
 describe("Blockchain", () => {
+  // mock date now function
   Date.now = jest.fn(() => 12345);
 
   const blockchain = new BlockChain();
@@ -15,5 +16,6 @@ describe("Blockchain", () => {
     const block = new Block(genisis.hash, value);
     blockchain.addBlock(value);
     expect(blockchain.currentBlock()).toEqual(block);
+    
   });
 });
