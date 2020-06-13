@@ -5,11 +5,18 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsc --watch",
-    "run": "node dist/index.js"
+    "run": "node dist/index.js",
+    "test": "jest --watch"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@types/node": "^14.0.13"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.0",
+    "jest": "^26.0.1",
+    "ts-jest": "^26.1.0",
+    "typescript": "^3.9.5"
   }
 }
