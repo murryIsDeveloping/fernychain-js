@@ -1,9 +1,9 @@
 import * as crypto from 'crypto';
 
 export type BlockValue = {
-    to: string,
-    from: string,
-    amount: number,
+    readonly to: string,
+    readonly from: string,
+    readonly amount: number,
 }
 
 
@@ -12,7 +12,7 @@ export interface IBlock {
     hash: string
     lastHash: string | null
     value: BlockValue | null
-    toString: () => void
+    toString: () => string
 }
 
 export class Block implements IBlock {
@@ -21,7 +21,7 @@ export class Block implements IBlock {
 
     constructor(public readonly lastHash: string, public readonly value: BlockValue){
         this.timestamp = Date.now()
-        this.hash = this.createHash()
+        this.hash = createHash(this)
     }
 
     public toString(){
@@ -33,12 +33,6 @@ export class Block implements IBlock {
             amount    : ${this.value.amount}
         `;
     }
-
-    private createHash(): string {
-        return crypto.createHmac('sha256', this.timestamp.toString())
-            .update(this.value.toString())
-            .digest('hex');
-    }
 }
 
 export class GenisisBlock implements IBlock {
@@ -49,7 +43,7 @@ export class GenisisBlock implements IBlock {
 
     constructor(){
         this.timestamp = Date.now();
-        this.hash = '177364DB1616B5D5E9A14253F5B16F2E9BF113586EEF7AE262B30702C0763E2A';
+        this.hash = createHash(this);
         this.lastHash = null
         this.value = null
     }
@@ -65,3 +59,8 @@ export class GenisisBlock implements IBlock {
     }
 }
 
+export function createHash(block: IBlock): string {
+    return crypto.createHmac('sha256', block.timestamp.toString())
+        .update(block.value ? JSON.stringify(block.value): 'Genisis')
+        .digest('hex');
+}
