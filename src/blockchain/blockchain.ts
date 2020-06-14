@@ -7,6 +7,10 @@ export class BlockChain {
     this.blocks.push(new GenisisBlock());
   }
 
+  public get chain(): IBlock[] {
+    return this.blocks
+  }
+
   public currentBlock() {
     return this.blocks[this.blocks.length - 1];
   }

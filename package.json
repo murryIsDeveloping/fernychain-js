@@ -5,17 +5,20 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsc --watch",
-    "run": "node dist/index.js",
+    "serve": "nodemon dist/app/index.js",
     "test": "jest --watch"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@types/node": "^14.0.13"
+    "express": "^4.17.1"
   },
   "devDependencies": {
+    "@types/express": "^4.17.6",
     "@types/jest": "^26.0.0",
+    "@types/node": "^14.0.13",
     "jest": "^26.0.1",
+    "nodemon": "^2.0.4",
     "ts-jest": "^26.1.0",
     "typescript": "^3.9.5"
   }
