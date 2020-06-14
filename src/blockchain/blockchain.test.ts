@@ -18,7 +18,7 @@ describe("Blockchain", () => {
   test("Add to blockchain", () => {
     const value = { to: "1", from: "2", amount: 100 };
     const genisis = new GenisisBlock();
-    const block = new Block(genisis.hash, value);
+    const block = new Block(genisis, value);
     blockchain.mineBlock(value);
     expect(blockchain.currentBlock()).toEqual(block);
   });

@@ -1,4 +1,4 @@
-import { Block, BlockValue, GenisisBlock, IBlock, createHash } from "./block";
+import { Block, BlockValue, GenisisBlock, IBlock } from "./block";
 
 export class BlockChain {
   private blocks: IBlock[] = [];
@@ -16,7 +16,7 @@ export class BlockChain {
   }
 
   public mineBlock(value: BlockValue) {
-    const nextBlock = new Block(this.currentBlock().hash, value);
+    const nextBlock = new Block(this.currentBlock(), value);
     this.blocks.push(nextBlock);
   }
 
@@ -40,14 +40,14 @@ export class BlockChain {
     }
 
     for(let i = 1; i < blocks.length; i++) {
-      let currentBlockHash = createHash(blocks[i])
-      let prevBlockHash = createHash(blocks[i-1])
+      let block = <Block>blocks[i];
+      let currentBlockHash = Block.createHash(block.timestamp, block.value, block.lastHash, block.noonce, block.difficulty);
 
-      if (currentBlockHash !== blocks[i].hash){
+      if (currentBlockHash !== block.hash){
         return false
       }
 
-      if(blocks[i].lastHash !== prevBlockHash){
+      if(block.lastHash !== blocks[i-1].hash){
         return false
       }
     }

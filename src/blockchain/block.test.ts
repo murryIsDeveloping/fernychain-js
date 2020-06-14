@@ -17,7 +17,7 @@ describe("Blocks", () => {
       amount: 100,
     };
     const genisis = new GenisisBlock();
-    const block = new Block(genisis.hash, value);
+    const block = new Block(genisis, value);
     expect(block.lastHash).toEqual(genisis.hash);
     expect(block.value).toEqual(value);
   });
@@ -28,26 +28,45 @@ describe("Blocks", () => {
       from: "2",
       amount: 100,
     };
-    const genisis = new GenisisBlock();
-    const block1 = new Block(genisis.hash, value);
-    const block2 = new Block(genisis.hash, value);
-    expect(block1.hash).toEqual(block2.hash);
+
+    const hash1 = Block.createHash(0, value, 'hash', 2, 1);
+    const hash2 = Block.createHash(0, value, 'hash', 2, 1);
+
+    expect(hash1).toEqual(hash2);
   });
 
   test("Hashes a different hash if block are different", () => {
-    const genisis = new GenisisBlock();
-    const block1 = new Block(genisis.hash, {
+    const value1 = {
       to: "1",
       from: "2",
       amount: 100,
-    });
+    };
 
-    const block2 = new Block(genisis.hash, {
+    const hash1 = Block.createHash(0, value1, 'hash', 2, 1);
+
+    const value2 = {
       to: "1",
       from: "2",
-      amount: 101,
-    });
+      amount: 50,
+    };
 
-    expect(block1.hash).not.toEqual(block2.hash);
+    const hash2 = Block.createHash(0, value2, 'hash', 2, 1);
+
+    expect(hash1).not.toEqual(hash2);
   });
+
+  test('Mine block to work to return true if preceeding zeros is greater than or equal to difficulty', () => {
+    const difficulty = 4;
+    const hash = '0000ljdasbflbdasfkj'
+
+    expect(Block.isMined(hash, difficulty)).toEqual(true)
+  })
+
+  test('Mine block to work to return false if preceeding zeros is less than the difficulty', () => {
+    const difficulty = 4;
+    const hash = '000ljdasbflbdasfkj'
+
+    expect(Block.isMined(hash, difficulty)).toEqual(false)
+  })
+
 });
