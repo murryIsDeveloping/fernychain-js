@@ -24,30 +24,30 @@ export class BlockChain {
     this.blocks.forEach(x => console.log(x.toString()))
   }
 
-  public replaceChain(newChain: BlockChain): void {
-    if(newChain.blocks.length > this.blocks.length){
+  public replaceChain(newChain: IBlock[]): void {
+    if(newChain.length > this.blocks.length){
       if(BlockChain.validateChain(newChain)){
-        this.blocks = newChain.blocks
+        this.blocks = newChain
       }
     }
   }
 
-  public static validateChain(blockChain: BlockChain): boolean {
+  public static validateChain(blocks: IBlock[]): boolean {
     let genisis = new GenisisBlock();
 
-    if(JSON.stringify(genisis) !== JSON.stringify(blockChain.blocks[0])){
+    if(genisis.hash !== blocks[0].hash || genisis.value !== genisis.value){
       return false
     }
 
-    for(let i = 1; i < blockChain.blocks.length; i++) {
-      let currentBlockHash = createHash(blockChain.blocks[i])
-      let prevBlockHash = createHash(blockChain.blocks[i-1])
+    for(let i = 1; i < blocks.length; i++) {
+      let currentBlockHash = createHash(blocks[i])
+      let prevBlockHash = createHash(blocks[i-1])
 
-      if (currentBlockHash !== blockChain.blocks[i].hash){
+      if (currentBlockHash !== blocks[i].hash){
         return false
       }
 
-      if(blockChain.blocks[i].lastHash !== prevBlockHash){
+      if(blocks[i].lastHash !== prevBlockHash){
         return false
       }
     }

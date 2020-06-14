@@ -25,14 +25,14 @@ describe("Blockchain", () => {
 
   test("Validate valid blockchain", () => {
     blockchain.mineBlock({ to: "1", from: "2", amount: 100 })
-    let invalid =  BlockChain.validateChain(blockchain);
+    let invalid =  BlockChain.validateChain(blockchain.chain);
     expect(invalid).toBe(true)
   })
 
   test("Validate invalid blockchain", () => {
     blockchain.mineBlock({ to: "1", from: "2", amount: 100 })
     blockchain.currentBlock().value = { to: "1", from: "2", amount: 200 }
-    let invalid =  BlockChain.validateChain(blockchain);
+    let invalid =  BlockChain.validateChain(blockchain.chain);
     expect(invalid).toBe(false)
   })
 
@@ -41,6 +41,7 @@ describe("Blockchain", () => {
     const newChain = new BlockChain()
     const value = { to: "1", from: "2", amount: 100 };
     blockchain.mineBlock(value)
+    blockchain.replaceChain(newChain.chain);
     
     expect(blockchain).not.toEqual(newChain)
   })
@@ -53,7 +54,7 @@ describe("Blockchain", () => {
 
     const nextValue = { to: "2", from: "1", amount: 50 };
     newChain.mineBlock(nextValue)
-    blockchain.replaceChain(newChain);
+    blockchain.replaceChain(newChain.chain);
     
     expect(blockchain).toEqual(newChain)
     expect(blockchain.currentBlock().value).toEqual(nextValue)
