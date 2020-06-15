@@ -1,5 +1,5 @@
-import { genKeyPair } from "../util/chain";
-import { ec, curve } from "elliptic";
+import { genKeyPair } from "../util";
+import { ec } from "elliptic";
 
 export class Wallet {
     public balance: number;
@@ -10,6 +10,10 @@ export class Wallet {
         this.balance = 100;
         this.keyPair = genKeyPair();
         this.publicKey = this.keyPair.getPublic().encode('hex', false);
+    }
+
+    public sign(dataHash: string): ec.Signature {
+        return this.keyPair.sign(dataHash);
     }
 
     public toString() : string {

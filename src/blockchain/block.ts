@@ -1,4 +1,4 @@
-import * as crypto from 'crypto';
+import { hash } from './../util';
 
 const BLOCKTIME = 3000
 
@@ -56,9 +56,7 @@ export class Block implements IBlock {
     }
 
     static createHash(timestamp: number, value: BlockValue, lastHash: string, noonce: number, difficulty: number): string {
-        return crypto.createHmac('sha256', timestamp.toString())
-            .update(`${JSON.stringify(value)}${lastHash}${noonce}${difficulty}`)
-            .digest('hex');
+        return hash(timestamp, `${JSON.stringify(value)}${lastHash}${noonce}${difficulty}`);
     }
 }
 
