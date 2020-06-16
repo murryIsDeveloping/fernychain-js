@@ -56,7 +56,7 @@ export class Block implements IBlock {
     }
 
     static createHash(timestamp: number, value: BlockValue, lastHash: string, noonce: number, difficulty: number): string {
-        return hash(timestamp, `${JSON.stringify(value)}${lastHash}${noonce}${difficulty}`);
+        return hash(`${timestamp}${JSON.stringify(value)}${lastHash}${noonce}${difficulty}`);
     }
 }
 

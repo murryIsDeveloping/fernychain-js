@@ -1,51 +1,78 @@
-import { uid, hashString } from "../util"
+import { uid, hash, verifySignature } from "../util"
 import { Wallet } from "./wallet"
 import { ec } from "elliptic";
 
 type Output = {
-    amount: number,
-    address: string
+    readonly amount: number,
+    readonly address: string
 }
 
 type Input = {
-    timestamp: number,
-    amount: number,
-    address: string,
-    signature: ec.Signature
+    readonly timestamp: number,
+    readonly amount: number,
+    readonly address: string,
+    readonly signature: string
 }
 
 export class Transaction {
     public readonly id: string 
     public outputs: Output[] = [];
-    public input: Input | undefined;
+    public input: Input;
 
-    constructor(){
-        this.id = uid()
-    }
-
-    static newTransaction(senderWallet: Wallet, recipient: string, amount: number): Transaction | Error {
-        const transaction = new Transaction()
-
+    constructor(senderWallet: Wallet, recipient: string, amount: number){
+        this.id = uid();
         if (amount > senderWallet.balance) {
-            return new Error(`Amount: ${ amount } exceeds balance.`); 
+            throw new Error(`Amount: ${ amount } exceeds balance.`); 
         }
 
-        transaction.outputs.push(...[
+        this.outputs.push(...[
             { amount: senderWallet.balance - amount, address: senderWallet.publicKey },
             { amount: amount, address: recipient },
         ])
 
-        Transaction.signTransaction(transaction, senderWallet)
-
-        return transaction;
+        
+        this.input = Transaction.signTransaction(this.outputs, senderWallet)
     }
 
-    static signTransaction(transaction: Transaction, senderWallet: Wallet) {
-        transaction.input = {
+    static verifyTransaction(transaction: Transaction): boolean | Error {
+        if(transaction.input){
+            return verifySignature(transaction.input.address, transaction.input.signature, hash(JSON.stringify(transaction.outputs)))
+        } else {
+            return Error('No transaction Inputs')
+        }
+    }
+    
+    static signTransaction(outputs: Output[], senderWallet: Wallet): Input {
+        return {
             timestamp: Date.now(),
             amount: senderWallet.balance,
             address: senderWallet.publicKey,
-            signature: senderWallet.sign(hashString(transaction.outputs.toString()))
+            signature: senderWallet.sign(hash(JSON.stringify(outputs))).toDER('hex')
         }
     }
+
+    public update(senderWallet: Wallet, recipient: string, amount: number){
+        const senderIndex = this.outputs.findIndex(output => output.address === senderWallet.publicKey);
+        const sender = this.outputs[senderIndex];
+
+        if(senderIndex < 0) {
+            throw new Error(`Sender Wallet does not have an output`); 
+        }
+
+        if (amount > sender.amount) {
+            throw new Error(`Amount: ${ amount } exceeds balance.`); 
+        }
+
+        const senderOutput = {
+            amount: sender.amount - amount,
+            address: sender.address
+        }
+
+        this.outputs[senderIndex] = senderOutput;
+        
+        this.outputs.push({ amount, address: recipient });
+        Transaction.signTransaction(this.outputs, senderWallet);
+
+    }
+
 }
