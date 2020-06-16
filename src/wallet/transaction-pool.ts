@@ -14,6 +14,9 @@ export class TransactionPool {
         } else {
             this.transactions.push(transaction)
         }
+    }
 
+    public getTransaction(address: string) : Transaction | undefined {
+        return this.transactions.find(t => t.input.address === address)
     }
 }

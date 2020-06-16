@@ -29,7 +29,6 @@ export class Transaction {
             { amount: senderWallet.balance - amount, address: senderWallet.publicKey },
             { amount: amount, address: recipient },
         ])
-
         
         this.input = Transaction.signTransaction(this.outputs, senderWallet)
     }
