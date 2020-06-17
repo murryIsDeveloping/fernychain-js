@@ -9,19 +9,13 @@ export function transactionRouter(p2pServer: P2pServer, wallet: Wallet) {
     res.send(p2pServer.pool.validTransactions());
   });
 
-  router.get("/public-key", (req, res) => {
-    res.send({
-      address: wallet.publicKey
-    });
-  });
-
-  router.get("/balance", (req, res) => {
+  router.get("/wallet", (req, res) => {
     wallet.calculateBalance(p2pServer.blockchain);
     res.send({
+      address: wallet.publicKey,
       balance: wallet.balance
     });
   });
-
 
   router.post("/transaction", (req, res) => {
     const transaction = wallet.createTransaction(req.body.address, req.body.amount, p2pServer.pool, p2pServer.blockchain)
