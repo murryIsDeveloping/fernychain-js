@@ -19,4 +19,19 @@ export class TransactionPool {
     public getTransaction(address: string) : Transaction | undefined {
         return this.transactions.find(t => t.input.address === address)
     }
+
+    public validTransactions(): Transaction[] {
+        return this.transactions.filter(trans => {
+            const outputTotal = trans.outputs.reduce((total, output) => output.amount + total, 0);
+            if (trans.input.amount !== outputTotal) {
+                return false;
+            }
+
+            if (!Transaction.verifyTransaction(trans)) {
+                return false
+            }
+
+            return true
+        });
+    }
 }

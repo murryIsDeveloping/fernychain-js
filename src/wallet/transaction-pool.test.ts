@@ -33,4 +33,27 @@ describe('Transaction Pool', () => {
         expect(pool.transactions[0]).toEqual(transaction)
         expect(pool.transactions[0].outputs.length).toEqual(3);
     })
+
+    describe('valid and invalid transaction', () => {
+        let transactionsLength = 10
+
+        beforeEach(() => {
+            for (let i = 0; i < transactionsLength; i++) {
+                if(i%2 === 0) {
+                   let valid = new Transaction(new Wallet(), `Address-${i}`, 10)
+                   pool.updateOrAddTransaction(valid)
+                } else {
+                    let invalid = JSON.parse(JSON.stringify(new Transaction(new Wallet(), `Address-${i}`, 10)));
+                    // randomly change the amount sent or change the address
+                    Math.random() > 0.5 ? invalid.outputs[0].amount = 20 : invalid.outputs[0].address = 'HackedAddress'
+                    pool.updateOrAddTransaction(invalid)
+                }
+            }
+        });
+
+        test('will filter to only valid transactions', () => {
+            expect(pool.transactions.length).toEqual(transactionsLength)
+            expect(pool.validTransactions().length).toEqual(transactionsLength/2)
+        })
+    })
 })
