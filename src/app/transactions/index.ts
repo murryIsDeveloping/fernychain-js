@@ -15,8 +15,16 @@ export function transactionRouter(p2pServer: P2pServer, wallet: Wallet) {
     });
   });
 
+  router.get("/balance", (req, res) => {
+    wallet.calculateBalance(p2pServer.blockchain);
+    res.send({
+      balance: wallet.balance
+    });
+  });
+
+
   router.post("/transaction", (req, res) => {
-    const transaction = wallet.createTransaction(req.body.address, req.body.amount, p2pServer.pool)
+    const transaction = wallet.createTransaction(req.body.address, req.body.amount, p2pServer.pool, p2pServer.blockchain)
     p2pServer.syncTransactions(transaction)
     res.redirect('/transactions')
   });

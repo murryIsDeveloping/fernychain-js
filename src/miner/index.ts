@@ -14,7 +14,9 @@ export class Miner {
 
     public mine() : Block {
         const validTransactions : Transaction[] = this.pool.validTransactions();
-        validTransactions.push(Transaction.miningReward(this.wallet.publicKey, Wallet.blockChainWallet()));
+        const blockchainWallet = Wallet.blockChainWallet();
+        blockchainWallet.calculateBalance(this.blockchain)
+        validTransactions.push(Transaction.miningReward(this.wallet.publicKey, blockchainWallet));
         const block = this.blockchain.mineBlock(validTransactions)
         this.p2p.syncChain();
         this.p2p.syncClearPool();

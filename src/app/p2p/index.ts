@@ -11,7 +11,7 @@ enum MessageType {
 
 type P2pMessage = {
   type: MessageType;
-  value: string;
+  value: any;
 };
 
 const peers = process.env.PEERS ? process.env.PEERS.split(",") : [];
@@ -34,29 +34,29 @@ export class P2pServer {
 
   public syncChain() {
     this.sockets.forEach((socket) => {
-      socket.send({
+      socket.send(JSON.stringify({
         type: MessageType.BLOCK,
-        value: JSON.stringify(this.blockchain.chain),
-      });
+        value: this.blockchain.chain,
+      }));
     });
   }
 
   public syncTransactions(transaction: Transaction) {
     this.sockets.forEach((socket) => {
-      socket.send({
+      socket.send(JSON.stringify({
         type: MessageType.TRANSACTION,
-        value: JSON.stringify(transaction),
-      });
+        value: transaction,
+      }));
     });
   }
 
   public syncClearPool() {
     this.pool.clearPool()
     this.sockets.forEach((socket) => {
-      socket.send({
+      socket.send(JSON.stringify({
         type: MessageType.CLEAR_POOL,
         value: "",
-      });
+      }));
     });
   }
 
@@ -75,15 +75,16 @@ export class P2pServer {
   }
 
   public messageHandler(socket: WebSocket) {
-    socket.on("message", (message: P2pMessage) => {
+    socket.on("message", (rawMessage: string) => {
+      const message = <P2pMessage>JSON.parse(rawMessage);
       if (message && message.value) {
-        const data = JSON.parse(message.value);
+        const data = message.value;
         switch (message.type) {
           case MessageType.BLOCK:
-            this.blockchain.replaceChain(data);
+            this.blockchain.replaceChain(message.value);
             break;
           case MessageType.TRANSACTION:
-            this.pool.updateOrAddTransaction(data);
+            this.pool.updateOrAddTransaction(message.value);
             break;
           case MessageType.CLEAR_POOL:
             this.pool.clearPool();

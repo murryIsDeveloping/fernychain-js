@@ -1,6 +1,8 @@
 import { hash } from './../util';
 import { DIFFICULTY, MINE_RATE } from './../config';
 import { Transaction } from './../wallet/transactions';
+import { Wallet } from './../wallet/wallet';
+
 
 export interface IBlock {
     timestamp: number
@@ -31,7 +33,7 @@ export class Block implements IBlock {
     }
 
     static adjustDifficulty(prevBlock: IBlock): number {
-        return prevBlock.timestamp + MINE_RATE > Date.now() ? prevBlock.difficulty - 1 : prevBlock.difficulty + 1
+        return prevBlock.timestamp + MINE_RATE > Date.now() ? prevBlock.difficulty + 1 : prevBlock.difficulty - 1
     }
 
     static isMined(hash: string, difficulty: number): boolean {
@@ -63,7 +65,7 @@ export class GenisisBlock implements IBlock {
         this.timestamp = 0;
         this.hash = 'Genisis';
         this.lastHash = null
-        this.value = []
+        this.value = [Transaction.genisisTransaction(Wallet.blockChainWallet())]
         this.difficulty = DIFFICULTY
         this.noonce = 0
     }

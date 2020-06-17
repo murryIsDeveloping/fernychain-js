@@ -4,13 +4,13 @@ import { Wallet } from "../wallet/wallet";
 
 
 describe("Blocks", () => {
-  let transactions = [new Transaction(Wallet.userWallet(), 'Address', 10)];
+  let transactions = [Transaction.create(Wallet.blockChainWallet(), 'Address', 10)];
   // mock date now function
   Date.now = jest.fn(() => 12345);
 
   test("Creates a Genisis Block", () => {
     const genisis = new GenisisBlock();
-    expect(genisis.value).toEqual([]);
+    expect(genisis.hash).toEqual('Genisis');
     expect(genisis.lastHash).toBeNull();
   });
 

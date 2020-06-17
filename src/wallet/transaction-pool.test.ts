@@ -8,8 +8,8 @@ describe('Transaction Pool', () => {
     let pool: TransactionPool
 
     beforeEach(() => {
-        wallet = Wallet.userWallet();
-        transaction = new Transaction(wallet, "randomaddress", 50);
+        wallet = Wallet.blockChainWallet();
+        transaction = Transaction.create(wallet, "randomaddress", 50);
         pool = new TransactionPool();
     });
 
@@ -39,7 +39,7 @@ describe('Transaction Pool', () => {
 
         beforeEach(() => {
             for (let i = 0; i < transactionsLength; i++) {
-                let newTransaction = new Transaction(Wallet.userWallet(), `Address-${i}`, 10)
+                let newTransaction = Transaction.create(Wallet.blockChainWallet(), `Address-${i}`, 10)
                 if(i%2 === 0) {
                    pool.updateOrAddTransaction(newTransaction)
                 } else {

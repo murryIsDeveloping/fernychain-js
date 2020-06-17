@@ -8,10 +8,10 @@ describe("Transaction", () => {
   let amount: number;
 
   beforeEach(() => {
-    wallet = Wallet.userWallet();
+    wallet = Wallet.blockChainWallet();
     amount = 50;
     recipient = "randomaddress";
-    transaction = new Transaction(wallet, recipient, amount);
+    transaction = Transaction.create(wallet, recipient, amount);
   });
 
   it("outputs the amount subtracted from the wallet balance", () => {
@@ -57,8 +57,8 @@ describe("Transaction", () => {
   describe("tranacting with amount that exceeds the balance", () => {
     test("does not create transaction", () => {
       const exccedBalance = () => {
-        amount = 10000;
-        transaction = new Transaction(wallet, recipient, amount);
+        amount = 100000000000;
+        transaction = Transaction.create(wallet, recipient, amount);
       };
       expect(exccedBalance).toThrow(Error);
     });
@@ -90,7 +90,7 @@ describe("Transaction", () => {
 
     test("will throw an error if amount is greater than balance", () => {
       const exccedBalance = () => {
-        amount = 10000;
+        amount = 100000000000;
         transaction.update(wallet, nextRecipient, amount);
       };
 

@@ -1,13 +1,16 @@
 import { Wallet } from "./wallet"
 import { TransactionPool } from "./transaction-pool"
 import { Transaction } from "./transactions"
+import { BlockChain } from "../blockchain"
 
 describe('Wallet', () => {
+    let blockchain: BlockChain
     let wallet : Wallet
     let pool : TransactionPool
 
     beforeEach(() => {
-        wallet = Wallet.userWallet()
+        blockchain = new BlockChain()
+        wallet = Wallet.blockChainWallet()
         pool = new TransactionPool()
     })
 
@@ -15,14 +18,14 @@ describe('Wallet', () => {
         let transaction: Transaction, sendAmount: number, recipient: string;
 
         beforeEach(() => {
-            sendAmount = 50;
+            sendAmount = 10;
             recipient = 'address';
-            transaction = wallet.createTransaction(recipient, sendAmount, pool);
+            transaction = wallet.createTransaction(recipient, sendAmount, pool, blockchain);
         })
 
         describe('doing the same transaction', () => {
             beforeEach(() => {
-                wallet.createTransaction(recipient, sendAmount, pool);
+                wallet.createTransaction(recipient, sendAmount, pool, blockchain);
             })
 
             it('doubles the `sendAmount` subtracted from the wallet balance', () => {

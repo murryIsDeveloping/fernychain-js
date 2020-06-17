@@ -12,7 +12,7 @@ describe("Blockchain", () => {
 
   beforeEach(() => {
     blockchain = new BlockChain();
-    transactions = [new Transaction(Wallet.userWallet(), 'Address', 10)];
+    transactions = [Transaction.create(Wallet.blockChainWallet(), 'Address', 10)];
   })
 
   test("Creates a Blockchain with a Genisis block", () => {
