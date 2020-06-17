@@ -2,15 +2,14 @@ import { genKeyPair } from "../util";
 import { ec } from "elliptic";
 import { Transaction } from "./transactions";
 import { TransactionPool } from "./transaction-pool";
+import { INITIAL_BALANCE, CURRENCY_CAP } from "../config";
 
 export class Wallet {
-    public balance: number;
     public readonly keyPair: ec.KeyPair;
     public readonly publicKey: string;
 
-    constructor(){
-        this.balance = 100;
-        this.keyPair = genKeyPair();
+    private constructor(public balance: number, isBlockchain = false){
+        this.keyPair = genKeyPair(isBlockchain);
         this.publicKey = this.keyPair.getPublic().encode('hex', false);
     }
 
@@ -40,5 +39,13 @@ export class Wallet {
             public-key: ${this.publicKey}
             balance: ${this.balance}
         `
+    }
+
+    static userWallet(){
+        return new this(INITIAL_BALANCE)
+    }
+
+    static blockChainWallet(){
+        return new this(CURRENCY_CAP, true)
     }
 }

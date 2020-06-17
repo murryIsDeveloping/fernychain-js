@@ -6,7 +6,7 @@ export function transactionRouter(p2pServer: P2pServer, wallet: Wallet) {
   const router = express.Router();
 
   router.get("/transactions", (req, res) => {
-    res.send(p2pServer.pool.transactions);
+    res.send(p2pServer.pool.validTransactions());
   });
 
   router.get("/public-key", (req, res) => {

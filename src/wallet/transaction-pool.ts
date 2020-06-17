@@ -7,6 +7,10 @@ export class TransactionPool {
         this.transactions = []
     }
 
+    public clearPool(){
+        this.transactions = []
+    }
+
     public updateOrAddTransaction(transaction: Transaction) {
         let transactionWithIdIndex = this.transactions.findIndex(t => t.id === transaction.id);
         if(transactionWithIdIndex >= 0) {
@@ -24,10 +28,12 @@ export class TransactionPool {
         return this.transactions.filter(trans => {
             const outputTotal = trans.outputs.reduce((total, output) => output.amount + total, 0);
             if (trans.input.amount !== outputTotal) {
+                console.log('Bad Amount', trans)
                 return false;
             }
 
             if (!Transaction.verifyTransaction(trans)) {
+                console.log('verifyTransaction', trans)
                 return false
             }
 

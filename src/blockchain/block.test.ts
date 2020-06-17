@@ -1,25 +1,24 @@
 import { Block, GenisisBlock } from "./block";
+import { Transaction } from "../wallet/transactions";
+import { Wallet } from "../wallet/wallet";
+
 
 describe("Blocks", () => {
+  let transactions = [new Transaction(Wallet.userWallet(), 'Address', 10)];
   // mock date now function
   Date.now = jest.fn(() => 12345);
 
   test("Creates a Genisis Block", () => {
     const genisis = new GenisisBlock();
-    expect(genisis.value).toBeNull();
+    expect(genisis.value).toEqual([]);
     expect(genisis.lastHash).toBeNull();
   });
 
   test("Creates a Block", () => {
-    const value = {
-      to: "1",
-      from: "2",
-      amount: 100,
-    };
     const genisis = new GenisisBlock();
-    const block = new Block(genisis, value);
+    const block = new Block(genisis, transactions);
     expect(block.lastHash).toEqual(genisis.hash);
-    expect(block.value).toEqual(value);
+    expect(block.value).toEqual(transactions);
   });
 
   test('Mine block to work to return true if preceeding zeros is greater than or equal to difficulty', () => {

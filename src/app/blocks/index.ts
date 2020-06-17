@@ -1,17 +1,16 @@
 import express from "express";
-import { P2pServer } from "../p2p";
+import { Miner } from "./../../miner";
 
-export function blocksRouter(p2pServer: P2pServer) {
+export function blocksRouter(miner: Miner) {
   const router = express.Router();
 
   router.get("/blocks", (req, res) => {
-    res.send(p2pServer.blockchain.chain);
+    res.send(miner.blockchain.chain);
   });
 
-  router.post("/mine", (req, res) => {
-    p2pServer.blockchain.mineBlock(req.body);
-    p2pServer.syncChain();
-    res.send(p2pServer.blockchain.chain);
+  router.get("/mine", (req, res) => {
+    const block = miner.mine();
+    res.send(block)
   });
 
   return router;

@@ -6,6 +6,7 @@ import { Transaction } from "./../../wallet/transactions";
 enum MessageType {
   BLOCK = "BLOCK",
   TRANSACTION = "TRANSACTION",
+  CLEAR_POOL = "CLEAR_POOL",
 }
 
 type P2pMessage = {
@@ -49,6 +50,16 @@ export class P2pServer {
     });
   }
 
+  public syncClearPool() {
+    this.pool.clearPool()
+    this.sockets.forEach((socket) => {
+      socket.send({
+        type: MessageType.CLEAR_POOL,
+        value: "",
+      });
+    });
+  }
+
   private connectSocket(socket: WebSocket) {
     this.sockets.push(socket);
     console.log("Socket connected");
@@ -73,6 +84,9 @@ export class P2pServer {
             break;
           case MessageType.TRANSACTION:
             this.pool.updateOrAddTransaction(data);
+            break;
+          case MessageType.CLEAR_POOL:
+            this.pool.clearPool();
             break;
         }
       }

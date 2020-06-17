@@ -7,7 +7,7 @@ describe('Wallet', () => {
     let pool : TransactionPool
 
     beforeEach(() => {
-        wallet = new Wallet()
+        wallet = Wallet.userWallet()
         pool = new TransactionPool()
     })
 

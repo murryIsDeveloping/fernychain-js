@@ -1,6 +1,6 @@
 import { uid, hash, verifySignature } from "../util"
 import { Wallet } from "./wallet"
-import { ec } from "elliptic";
+import { MINING_REWARD } from "./../config"
 
 type Output = {
     readonly amount: number,
@@ -70,8 +70,10 @@ export class Transaction {
         this.outputs[senderIndex] = senderOutput;
         
         this.outputs.push({ amount, address: recipient });
-        Transaction.signTransaction(this.outputs, senderWallet);
-
+        this.input = Transaction.signTransaction(this.outputs, senderWallet);
     }
 
+    static miningReward(minerAddress: string, blockchainWallet: Wallet){
+        return new Transaction(blockchainWallet, minerAddress, MINING_REWARD);
+    }
 }

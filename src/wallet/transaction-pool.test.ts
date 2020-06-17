@@ -8,7 +8,7 @@ describe('Transaction Pool', () => {
     let pool: TransactionPool
 
     beforeEach(() => {
-        wallet = new Wallet();
+        wallet = Wallet.userWallet();
         transaction = new Transaction(wallet, "randomaddress", 50);
         pool = new TransactionPool();
     });
@@ -34,16 +34,16 @@ describe('Transaction Pool', () => {
         expect(pool.transactions[0].outputs.length).toEqual(3);
     })
 
-    describe('valid and invalid transaction', () => {
+    describe('of valid and invalid transactions', () => {
         let transactionsLength = 10
 
         beforeEach(() => {
             for (let i = 0; i < transactionsLength; i++) {
+                let newTransaction = new Transaction(Wallet.userWallet(), `Address-${i}`, 10)
                 if(i%2 === 0) {
-                   let valid = new Transaction(new Wallet(), `Address-${i}`, 10)
-                   pool.updateOrAddTransaction(valid)
+                   pool.updateOrAddTransaction(newTransaction)
                 } else {
-                    let invalid = JSON.parse(JSON.stringify(new Transaction(new Wallet(), `Address-${i}`, 10)));
+                    let invalid = JSON.parse(JSON.stringify(newTransaction));
                     // randomly change the amount sent or change the address
                     Math.random() > 0.5 ? invalid.outputs[0].amount = 20 : invalid.outputs[0].address = 'HackedAddress'
                     pool.updateOrAddTransaction(invalid)
@@ -54,6 +54,11 @@ describe('Transaction Pool', () => {
         test('will filter to only valid transactions', () => {
             expect(pool.transactions.length).toEqual(transactionsLength)
             expect(pool.validTransactions().length).toEqual(transactionsLength/2)
+        })
+
+        test('will clear all transactions', () => {
+            pool.clearPool()
+            expect(pool.transactions.length).toEqual(0)
         })
     })
 })

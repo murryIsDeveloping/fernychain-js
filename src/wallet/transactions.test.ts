@@ -8,7 +8,7 @@ describe("Transaction", () => {
   let amount: number;
 
   beforeEach(() => {
-    wallet = new Wallet();
+    wallet = Wallet.userWallet();
     amount = 50;
     recipient = "randomaddress";
     transaction = new Transaction(wallet, recipient, amount);

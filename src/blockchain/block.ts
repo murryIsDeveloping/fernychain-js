@@ -1,19 +1,12 @@
 import { hash } from './../util';
-
-const BLOCKTIME = 3000
-
-export type BlockValue = {
-    readonly to: string,
-    readonly from: string,
-    readonly amount: number,
-}
-
+import { DIFFICULTY, MINE_RATE } from './../config';
+import { Transaction } from './../wallet/transactions';
 
 export interface IBlock {
     timestamp: number
     hash: string
     lastHash: string | null
-    value: BlockValue | null
+    value: Transaction[]
     difficulty: number
     noonce: number
     toString: () => string
@@ -26,7 +19,7 @@ export class Block implements IBlock {
     public readonly difficulty: number
     public readonly noonce: number
 
-    constructor(previousBlock: IBlock, public readonly value: BlockValue){
+    constructor(previousBlock: IBlock, public readonly value: Transaction[]){
         this.lastHash = previousBlock.hash
         this.noonce = 0
         do {
@@ -38,7 +31,7 @@ export class Block implements IBlock {
     }
 
     static adjustDifficulty(prevBlock: IBlock): number {
-        return prevBlock.timestamp + BLOCKTIME > Date.now() ? prevBlock.difficulty - 1 : prevBlock.difficulty + 1
+        return prevBlock.timestamp + MINE_RATE > Date.now() ? prevBlock.difficulty - 1 : prevBlock.difficulty + 1
     }
 
     static isMined(hash: string, difficulty: number): boolean {
@@ -47,15 +40,13 @@ export class Block implements IBlock {
 
     public toString(){
         return `Block: ${this.hash}
-            timestamp :  ${this.timestamp},
-            lastHash  :  ${this.lastHash},
-            to        : ${this.value.to},
-            from      : ${this.value.from},
-            amount    : ${this.value.amount}
+            timestamp   :  ${this.timestamp},
+            lastHash    :  ${this.lastHash},
+            transactions: ${JSON.stringify(this.value)},
         `;
     }
 
-    static createHash(timestamp: number, value: BlockValue, lastHash: string, noonce: number, difficulty: number): string {
+    static createHash(timestamp: number, value: Transaction[], lastHash: string, noonce: number, difficulty: number): string {
         return hash(`${timestamp}${JSON.stringify(value)}${lastHash}${noonce}${difficulty}`);
     }
 }
@@ -64,7 +55,7 @@ export class GenisisBlock implements IBlock {
     public readonly timestamp: number;
     public readonly hash: string;
     public readonly lastHash: null;
-    public readonly value: null;
+    public readonly value: Transaction[];
     public readonly difficulty: number;
     public readonly noonce: number;
 
@@ -72,18 +63,16 @@ export class GenisisBlock implements IBlock {
         this.timestamp = 0;
         this.hash = 'Genisis';
         this.lastHash = null
-        this.value = null
-        this.difficulty = 2
+        this.value = []
+        this.difficulty = DIFFICULTY
         this.noonce = 0
     }
 
     public toString(){
         return `Block: ${this.hash}
-            timestamp :  ${this.timestamp},
-            lastHash  :  ${this.lastHash},
-            to        : null,
-            from      : null,
-            amount    : null
+            timestamp   :  ${this.timestamp},
+            lastHash    :  ${this.lastHash},
+            transactions: [],
         `;
     }
 }

@@ -1,5 +1,5 @@
 import { TransactionPool } from "./../wallet/transaction-pool";
-import { BlockChain } from "./../blockchain";
+import { BlockChain, Block } from "./../blockchain";
 import { P2pServer } from "./../app/p2p";
 import { Wallet } from "./../wallet/wallet";
 import { Transaction } from "./../wallet/transactions";
@@ -12,13 +12,12 @@ export class Miner {
         public p2p: P2pServer
     ){ }
 
-    public mine(){
+    public mine() : Block {
         const validTransactions : Transaction[] = this.pool.validTransactions();
-        // include reward for miner
-        // create a block of valid transactions
-        // sync chains in p2p server
-        // clear trans pools
-        
-
+        validTransactions.push(Transaction.miningReward(this.wallet.publicKey, Wallet.blockChainWallet()));
+        const block = this.blockchain.mineBlock(validTransactions)
+        this.p2p.syncChain();
+        this.p2p.syncClearPool();
+        return block;
     }
 }

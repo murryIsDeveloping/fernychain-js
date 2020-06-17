@@ -10,8 +10,8 @@ type StringifiedSignature = {
       
 }
 
-export function genKeyPair() : EC.KeyPair{
-    return ec.genKeyPair()
+export function genKeyPair(blockchain = false) : EC.KeyPair{
+    return blockchain ? ec.keyFromPrivate('Blockchain') : ec.genKeyPair()
 }
 
 export function uid() : string {

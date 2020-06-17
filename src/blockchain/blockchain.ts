@@ -1,4 +1,5 @@
-import { Block, BlockValue, GenisisBlock, IBlock } from "./block";
+import { Block, GenisisBlock, IBlock } from "./block";
+import { Transaction } from "./../wallet/transactions";
 
 export class BlockChain {
   private blocks: IBlock[] = [];
@@ -15,9 +16,10 @@ export class BlockChain {
     return this.blocks[this.blocks.length - 1];
   }
 
-  public mineBlock(value: BlockValue) {
+  public mineBlock(value: Transaction[]): Block {
     const nextBlock = new Block(this.currentBlock(), value);
     this.blocks.push(nextBlock);
+    return nextBlock;
   }
 
   public printBlocks(){
