@@ -15,7 +15,7 @@
     "elliptic": "^6.5.2",
     "express": "^4.17.1",
     "uuid": "^8.1.0",
-    "ws": "^7.3.0"
+    "ws": "^7.4.6"
   },
   "devDependencies": {
     "@types/elliptic": "^6.4.12",
